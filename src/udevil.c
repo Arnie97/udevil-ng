@@ -5257,6 +5257,12 @@ printf("\n-----------------------\n");
                     data->options = g_strdup( arg_next );
                     ac += next_inc;
                 }
+                else if ( !strncmp( arg, "-o", 2 ) && strlen( arg ) > 2 )
+                {
+                    if ( data->options )
+                        goto _reject_too_many;
+                    data->options = g_strdup( arg + 2 );
+                }
                 else if ( !strcmp( arg, "-L" ) )
                 {
                     if ( !arg_next )
