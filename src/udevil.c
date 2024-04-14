@@ -435,7 +435,6 @@ if ( !( cond & G_IO_NVAL ) )
 
     struct udev_device *udevice;
     const char *action;
-    const char *acted = NULL;
     char* devnode;
     if ( udevice = udev_monitor_receive_device( umonitor ) )
     {
@@ -637,7 +636,6 @@ char* get_known_filesystems()
     // get additional types from files
     static const char *type_files[] = { "/proc/filesystems", "/etc/filesystems", NULL };
     gchar *filesystems;
-    GError *error;
     gchar **lines;
     guint n;
     char* str;
@@ -646,7 +644,6 @@ char* get_known_filesystems()
     {
         filesystems = NULL;
         lines = NULL;
-        error = NULL;
         if ( g_file_get_contents( type_files[i], &filesystems, NULL, NULL ) )
         {
             lines = g_strsplit (filesystems, "\n", -1);
@@ -781,7 +778,6 @@ static char* parse_config( int* config_warning )
     FILE* file;
     char line[ 2048 ];
     char* conf_path;
-    char* sline;
     char* equal;
     char* var;
     char* value;
@@ -953,7 +949,6 @@ static void wlog( const char* msg, const char* sub1, int volume )
 static void lock_log( gboolean lock )
 {
     FILE* file;
-    char* name;
     struct stat statbuf;
 
     const char* rlock = "/run/lock";
@@ -1252,7 +1247,6 @@ static gboolean validate_in_groups( const char* name, const char* type,
                                                             const char* username )
 {
     char* list = NULL;
-    char* str;
     char* comma;
     char* element;
     char* selement;
@@ -1315,7 +1309,6 @@ static char* validate_options( const char* name, const char* type,
 {
     char* fulllist = NULL;
     char* list;
-    char* str;
     char* comma;
     char* element;
     char* oelement;
@@ -1502,7 +1495,6 @@ int user_on_tty()
 static void detach_loop( const char* loopdev )
 {
     char* stdout = NULL;
-    char* str;
     int status = 0;
     int exit_status = 1;
     gchar *argv[4] = { NULL };
@@ -1600,7 +1592,6 @@ static char* attach_fd_to_loop( const char* device_file, int fd )
     }
     
     char* stdout = NULL;
-    char* str;
     int status = 0;
     int exit_status = 1;
     gchar *argv[4] = { NULL };
@@ -1750,7 +1741,6 @@ static gboolean device_is_mounted_mtab( const char* device_file, char** mount_po
     GError *error;
     guint n;
     gboolean ret = FALSE;
-    char* str;
     char* file;
     gchar encoded_file[PATH_MAX];
     gchar encoded_point[PATH_MAX];
@@ -1813,8 +1803,6 @@ static gboolean path_is_mounted_mtab( const char* path, char** device_file )
     GError *error;
     guint n;
     gboolean ret = FALSE;
-    char* str;
-    char* file;
     char* point;
     gchar encoded_file[PATH_MAX];
     gchar encoded_point[PATH_MAX];
@@ -4329,7 +4317,6 @@ static int command_remove( CommandData* data )
     const char* device_file = data->device_file;
     char* str;
     char* str2;
-    int ret = 0;
     
     // got root?
     if ( orig_euid != 0 )
@@ -4562,7 +4549,6 @@ static int command_remove( CommandData* data )
     
     // stop device - contains code from pmount-jjk
     char *c;
-    FILE *f;
     path = NULL;
     
     // now extract the part we want, up to the grand-parent of the host

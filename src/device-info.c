@@ -259,7 +259,6 @@ void info_drive_connection( device_t *device )
 {
   char *s;
   char *p;
-  char *q;
   char *model;
   char *vendor;
   char *subsystem;
