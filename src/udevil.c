@@ -917,7 +917,7 @@ static char* parse_config( int* config_warning )
 _parse_error:
     restore_privileges();
     fclose( file );
-    drop_privileges( 0 );    
+    drop_privileges( 0 );
     g_free( conf_path );
     return NULL;
 }
@@ -1159,7 +1159,7 @@ static void dump_log()
     lock_log( FALSE );
     chmod( logfile, S_IRWXU );
     drop_privileges( 0 );
-    
+
     g_free( logmem );
     logmem = NULL;
 }
@@ -1181,7 +1181,7 @@ static gboolean validate_in_list( const char* name, const char* type, const char
     gboolean depth = !strcmp( name, "allowed_files" ) ||
                      !strcmp( name, "forbidden_files" ) ||
                      !strcmp( name, "allowed_media_dirs" );
-    
+
 //printf("list[%s_%s] = {%s}\n", name, type, list );
     while ( list && list[0] )
     {
@@ -1590,7 +1590,7 @@ static char* attach_fd_to_loop( const char* device_file, int fd )
         wlog( _("udevil: error 150: path changed\n"), NULL, 2 );
         return NULL;
     }
-    
+
     char* stdout = NULL;
     int status = 0;
     int exit_status = 1;
@@ -1953,7 +1953,7 @@ static int root_write_to_file( const char* path, const char* data )
 {
     FILE *f;
     size_t expected, actual;
-    
+
     if ( !( data && data[0] != '\0' ) )
         return 1;
     restore_privileges();
@@ -1986,11 +1986,11 @@ static int exec_program( const char* var, const char* msg, gboolean show_error,
 
     if ( !as_root && orig_ruid == 0 )
         return 0;
-        
+
     const char* prog = read_config( var, NULL );
     if ( !( prog && prog[0] != '\0' ) )
         return 0;
-    
+
     argv[a++] = g_strdup( prog );
     argv[a++] = g_strdup( g_get_user_name() );
     argv[a++] = g_strdup( msg );
@@ -2053,10 +2053,10 @@ static int try_umount( const char* device_file, gboolean force, gboolean lazy )
     gchar *argv[6] = { NULL };
     char* sstdout = NULL;
     char* sstderr = NULL;
-    
+
     if ( !g_strcmp0( device_file, "none" ) )
-        return 1;    
-    
+        return 1;
+
     int a = 0;
     argv[a++] = g_strdup( read_config( "umount_program", NULL ) );
     if ( !argv[0] )
@@ -2066,7 +2066,7 @@ static int try_umount( const char* device_file, gboolean force, gboolean lazy )
     if ( force )
         argv[a++] = g_strdup( "-f" );
     if ( lazy )
-        argv[a++] = g_strdup( "-l" );    
+        argv[a++] = g_strdup( "-l" );
     argv[a++] = g_strdup( device_file );
     char* allarg = g_strjoinv( " ", argv );
 
@@ -2077,7 +2077,7 @@ static int try_umount( const char* device_file, gboolean force, gboolean lazy )
     wlog( _("udevil: trying umount as current user\n"), NULL, 0 );
     wlog( "USER: %s\n", allarg, 0 );
     g_free( allarg );
-    
+
     // run
     if ( g_spawn_sync( NULL, argv, NULL, 0, NULL, NULL, &sstdout, &sstderr, &status, NULL ) )
     {
@@ -2141,7 +2141,7 @@ static int umount_path( const char* path, gboolean force, gboolean lazy )
     setregid( 0, -1 );
 
     // run
-    if ( !check_realpath( path ) && 
+    if ( !check_realpath( path ) &&
                 g_file_test( path, G_FILE_TEST_EXISTS ) /* not net url */ )
     {
         wlog( _("udevil: error 144: invalid path\n"), NULL, 2 );
@@ -2213,7 +2213,7 @@ static int mount_device( const char* device_file, const char* fstype,
     }
 
     // check existing device path and run mount
-    if ( !check_realpath( device_file ) && 
+    if ( !check_realpath( device_file ) &&
                 g_file_test( device_file, G_FILE_TEST_EXISTS ) /* not net url */ )
     {
         wlog( _("udevil: error 144: invalid path\n"), NULL, 2 );
@@ -2248,7 +2248,7 @@ static int mount_device( const char* device_file, const char* fstype,
     return exit_status;
 }
 
-static int mount_file( int fd, const char* device_file, const char* fstype, 
+static int mount_file( int fd, const char* device_file, const char* fstype,
                                         const char* options, const char* point )
 {
     char* loopdev = attach_fd_to_loop( device_file, fd );
@@ -2275,10 +2275,10 @@ static gboolean mount_knows( const char* device_file )
     int exit_status = 1;
     gchar *argv[5] = { NULL };
     int a = 0;
-    
+
     if ( !g_strcmp0( device_file, "none" ) )
-        return FALSE;    
-    
+        return FALSE;
+
     argv[a++] = g_strdup( read_config( "mount_program", NULL ) );
     if ( !argv[0] )
         return FALSE;
@@ -2341,7 +2341,7 @@ static gboolean create_auto_media()
 {
     char* str;
     gboolean ret = FALSE;
-    
+
     // create /media/$USER
     char* auto_media = g_build_filename( AUTO_MEDIA_DIR, g_get_user_name(), NULL );
     restore_privileges();
@@ -2571,10 +2571,10 @@ static int parse_network_url( const char* url, const char* fstype,
     char* orig_url = strdup( url );
     char* xurl = orig_url;
     gboolean is_colon = FALSE;
-    
+
     // determine url type
-    if ( g_str_has_prefix( xurl, "smb:" ) || g_str_has_prefix( xurl, "smbfs:" ) 
-                                               || g_str_has_prefix( xurl, "cifs:" ) 
+    if ( g_str_has_prefix( xurl, "smb:" ) || g_str_has_prefix( xurl, "smbfs:" )
+                                               || g_str_has_prefix( xurl, "cifs:" )
                                                || g_str_has_prefix( xurl, "//" ) )
     {
         ret = 2;
@@ -2643,7 +2643,7 @@ static int parse_network_url( const char* url, const char* fstype,
     {
         ret = 2;
         if ( g_str_has_prefix( xurl, "sshfs#ssh:" )
-                            || g_str_has_prefix( xurl, "sshfs#sshfs:" ) 
+                            || g_str_has_prefix( xurl, "sshfs#sshfs:" )
                             || g_str_has_prefix( xurl, "sshfs#sftp:" ) )
             is_colon = TRUE;
         if ( fstype && strcmp( fstype, "sshfs" ) )
@@ -2654,7 +2654,7 @@ static int parse_network_url( const char* url, const char* fstype,
         }
         nm->fstype = g_strdup( "sshfs" );
     }
-    else if ( g_str_has_prefix( xurl, "ssh:" ) || g_str_has_prefix( xurl, "sshfs:" ) 
+    else if ( g_str_has_prefix( xurl, "ssh:" ) || g_str_has_prefix( xurl, "sshfs:" )
                                             || g_str_has_prefix( xurl, "sftp:" ) )
     {
         ret = 2;
@@ -2706,7 +2706,7 @@ static int parse_network_url( const char* url, const char* fstype,
         }
         str[0] = ':';
     }
-    else if ( fstype && ( !strcmp( fstype, "nfs" ) || 
+    else if ( fstype && ( !strcmp( fstype, "nfs" ) ||
                           !strcmp( fstype, "nfs4" ) ||
                           !strcmp( fstype, "smbfs" ) ||
                           !strcmp( fstype, "cifs" ) ||
@@ -2722,7 +2722,7 @@ static int parse_network_url( const char* url, const char* fstype,
 
     if ( ret != 2 )
         goto _net_free;
-            
+
     // parse
     if ( is_colon && ( str = strchr( xurl, ':' ) ) )
     {
@@ -2819,7 +2819,7 @@ static int parse_network_url( const char* url, const char* fstype,
         wlog( _("udevil: error 34: '%s' is not a recognized network url\n"), url, 2 );
         goto _net_free;
     }
-    
+
     // check user pass port
     if ( ( nm->user && strchr( nm->user, ' ' ) )
             || ( nm->pass && strchr( nm->pass, ' ' ) )
@@ -2959,7 +2959,7 @@ _get_type:
                 type = MOUNT_MISSING;
             else if ( !g_strcmp0( data->device_file, "overlay" ) )
                 type = MOUNT_OVERLAY;
-            else if ( !g_strcmp0( data->device_file, "tmpfs" ) || 
+            else if ( !g_strcmp0( data->device_file, "tmpfs" ) ||
                                     !g_strcmp0( data->device_file, "ramfs" ) )
                 type = MOUNT_FILE;
             else
@@ -3062,7 +3062,7 @@ _get_type:
                                 type == MOUNT_NET ? netmount->url : data->device_file );
                     wlog( str, NULL, -1 );
                     g_free( str );
-                    
+
                     // success_exec
                     if ( !ret )
                     {
@@ -3148,7 +3148,7 @@ _get_type:
                     wlog( _("udevil: error 47: cannot canonicalize attached loop device\n"),
                                                             NULL, 2 );
                     return 2;
-                }            
+                }
                 if ( !validate_in_list( "allowed_types", g_get_user_name(), "file" ) )
                 {
                     wlog( _("udevil: denied 48: 'file' is not an allowed type\n"),
@@ -3302,7 +3302,7 @@ _get_type:
             goto _finish;
         }
         drop_privileges( 0 );
-        
+
         // get fstype
         if ( !device_is_mounted_mtab( data->device_file, NULL, &fstype ) )
         {
@@ -3338,7 +3338,7 @@ _get_type:
             ret = 1;
             goto _finish;
         }
-        
+
         udev = udev_new();
         if ( udev == NULL )
         {
@@ -3540,7 +3540,7 @@ _get_type:
         }
         // is parent dir an allowed media dir?
         parent_dir = g_path_get_dirname( data->point );
-        if ( !parent_dir || parent_dir[0] != '/' || 
+        if ( !parent_dir || parent_dir[0] != '/' ||
                 !validate_in_list( "allowed_media_dirs", fstype, parent_dir ) )
         {
             wlog( _("udevil: denied 71: '%s' is not an allowed media directory\n"),
@@ -3680,7 +3680,7 @@ _get_type:
                     ret = 2;
                     goto _finish;
                 }
-                if ( stat64( data->device_file, &statbuf ) != 0 || 
+                if ( stat64( data->device_file, &statbuf ) != 0 ||
                                             fstat64( fd, &statfd ) != 0 ||
                                             !S_ISREG( statbuf.st_mode ) ||
                                             !S_ISREG( statfd.st_mode ) ||
@@ -3774,8 +3774,8 @@ _get_type:
             ret = exec_program( "validate_exec", str, TRUE, FALSE );
         g_free( str );
         if ( ret )
-            goto _finish;        
-        
+            goto _finish;
+
         // unmount
         if ( data->point && !( ret = umount_path( data->point, data->force,
                                                                 data->lazy ) ) )
@@ -3971,7 +3971,7 @@ _get_type:
         ret = 2;
         goto _finish;
     }
-    
+
     // check for net remount
     if ( remount && type == MOUNT_NET && ( !strcmp( fstype, "ftpfs" )
                                         || !strcmp( fstype, "curlftpfs" )
@@ -4030,7 +4030,7 @@ _get_type:
                                                 netmount->ip );
         g_free( str );
     }
-    
+
     // no point and not remount
     if ( !data->point && !remount )
     {
@@ -4097,7 +4097,7 @@ _get_type:
                             type == MOUNT_NET ? netmount->url : data->device_file );
                 wlog( str, NULL, -1 );
                 g_free( str );
-                
+
                 // success_exec
                 if ( !ret )
                 {
@@ -4152,9 +4152,9 @@ _get_type:
         g_free( str );
         if ( ret )
             goto _finish;
-            
+
         // remount
-        if ( type == MOUNT_NET )            
+        if ( type == MOUNT_NET )
             ret = mount_device( netmount->url, data->fstype ? fstype : NULL, options,
                                                                         NULL, TRUE );
         else
@@ -4258,7 +4258,7 @@ _get_type:
                         parent_dir = g_strdup( str2 + 1 );
                         g_free( str2 );
                     }
-                    if ( parent_dir[0] == '\0' 
+                    if ( parent_dir[0] == '\0'
                                         || !g_utf8_validate( parent_dir, -1, NULL )
                                         || strlen( parent_dir ) > 30 )
                     {
@@ -4286,7 +4286,7 @@ _get_type:
                 mname = NULL;
             }
         }
-            
+
         if ( !mname )
             mname = g_strdup( bdev );
 
@@ -4378,13 +4378,13 @@ _get_type:
         else
             ret = mount_device( netmount->url, fstype, options, point, TRUE );
     }
-    else if ( type == MOUNT_FILE && g_strcmp0( data->device_file, "tmpfs" ) && 
+    else if ( type == MOUNT_FILE && g_strcmp0( data->device_file, "tmpfs" ) &&
                                     g_strcmp0( data->device_file, "ramfs" ) )
-        ret = mount_file( fd, data->device_file, 
+        ret = mount_file( fd, data->device_file,
                                 g_strcmp0( fstype, "file" ) ? fstype : NULL,
                                 options, point );
     else
-        ret = mount_device( data->device_file, 
+        ret = mount_device( data->device_file,
                                 g_strcmp0( fstype, "file" ) ? fstype : NULL,
                                 options, point, TRUE );
 
@@ -4426,7 +4426,7 @@ _get_type:
                     point );
         wlog( str, NULL, -1 );
         g_free( str );
-        
+
         // success_exec
         // no translate
         str = g_strdup_printf( "%s mounted %s at %s",
@@ -4472,7 +4472,7 @@ static int command_remove( CommandData* data )
     const char* device_file = data->device_file;
     char* str;
     char* str2;
-    
+
     // got root?
     if ( orig_euid != 0 )
     {
@@ -4581,7 +4581,7 @@ static int command_remove( CommandData* data )
     char* host_path;
     CommandData* data2;
     int result, n;
-    
+
     // get host device
     //printf("native_path=%s\n", device->native_path );
     host_path = g_strdup( udev_device_get_property_value( udevice,
@@ -4645,7 +4645,7 @@ static int command_remove( CommandData* data )
     {
         if ( !strcmp( filename, "." ) || !strcmp( filename, ".." ) )
             continue;
-        
+
         /* construct /sys/block/<device>/<partition>/dev */
         partdirname = g_build_filename( host_path, filename, "dev", NULL );
 
@@ -4663,7 +4663,7 @@ static int command_remove( CommandData* data )
         /* construct /dev/<partition> */
         path = g_strdup_printf( "/dev/%s", filename );
         wlog( _("udevil: examining partition %s\n"), path, 0 );
-        
+
         while( device_is_mounted_mtab( path, NULL, NULL ) )
         {
             // unmount partition
@@ -4695,17 +4695,17 @@ static int command_remove( CommandData* data )
 
     // flush buffers
     sync();
-        
+
     if ( skip_driver )
     {
         g_free( host_path );
         return 0;
     }
-    
+
     // stop device - contains code from pmount-jjk
     char *c;
     path = NULL;
-    
+
     // now extract the part we want, up to the grand-parent of the host
     // e.g: /sys/devices/pci0000:00/0000:00:06.0/usb1/1-2
     while ( (c = strrchr( host_path, '/' )) )
@@ -4770,7 +4770,7 @@ static int command_remove( CommandData* data )
     }
     else
         wlog( _("udevil: warning 123: missing power control %s\n"), path, 1 );
-    g_free( path );    
+    g_free( path );
 
     // no translate
     wlog( "Stopped device %s\n", host_path, -1 );
@@ -5302,7 +5302,7 @@ printf("\n-----------------------\n");
             wlog( _("udevil: error 138: argument is not valid UTF-8\n"), NULL, 2 );
             goto _exit;
         }
-        
+
         switch ( data->cmd_type )
         {
             case CMD_UNSET:
