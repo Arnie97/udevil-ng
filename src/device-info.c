@@ -221,7 +221,7 @@ gboolean info_is_system_internal( device_t *device )
 {
     const char *value;
 
-    if ( value = udev_device_get_property_value( device->udevice, "UDISKS_SYSTEM_INTERNAL" ) )
+    if ( (value = udev_device_get_property_value( device->udevice, "UDISKS_SYSTEM_INTERNAL" )) )
         return atoi( value ) != 0;
 
     /* A Linux MD device is system internal if, and only if
@@ -545,25 +545,25 @@ void info_drive_properties ( device_t *device )
     device->device_is_drive = sysfs_file_exists( device->native_path, "range" );
 
     // vendor
-    if ( value = udev_device_get_property_value( device->udevice, "ID_VENDOR_ENC" ) )
+    if ( (value = udev_device_get_property_value( device->udevice, "ID_VENDOR_ENC" )) )
     {
         decoded_string = decode_udev_encoded_string ( value );
         g_strstrip (decoded_string);
         device->drive_vendor = decoded_string;
     }
-    else if ( value = udev_device_get_property_value( device->udevice, "ID_VENDOR" ) )
+    else if ( (value = udev_device_get_property_value( device->udevice, "ID_VENDOR" )) )
     {
         device->drive_vendor = g_strdup( value );
     }
 
     // model
-    if ( value = udev_device_get_property_value( device->udevice, "ID_MODEL_ENC" ) )
+    if ( (value = udev_device_get_property_value( device->udevice, "ID_MODEL_ENC" )) )
     {
         decoded_string = decode_udev_encoded_string ( value );
         g_strstrip (decoded_string);
         device->drive_model = decoded_string;
     }
-    else if ( value = udev_device_get_property_value( device->udevice, "ID_MODEL" ) )
+    else if ( (value = udev_device_get_property_value( device->udevice, "ID_MODEL" )) )
     {
         device->drive_model = g_strdup( value );
     }
@@ -573,7 +573,7 @@ void info_drive_properties ( device_t *device )
                                                     device->udevice, "ID_REVISION" ) );
 
     // serial
-    if ( value = udev_device_get_property_value( device->udevice, "ID_SCSI_SERIAL" ) )
+    if ( (value = udev_device_get_property_value( device->udevice, "ID_SCSI_SERIAL" )) )
     {
         /* scsi_id sometimes use the WWN as the serial - annoying - see
         * http://git.kernel.org/?p=linux/hotplug/udev.git;a=commit;h=4e9fdfccbdd16f0cfdb5c8fa8484a8ba0f2e69d3
@@ -581,17 +581,17 @@ void info_drive_properties ( device_t *device )
         */
         device->drive_serial = g_strdup( value );
     }
-    else if ( value = udev_device_get_property_value( device->udevice, "ID_SERIAL_SHORT" ) )
+    else if ( (value = udev_device_get_property_value( device->udevice, "ID_SERIAL_SHORT" )) )
     {
         device->drive_serial = g_strdup( value );
     }
 
     // wwn
-    if ( value = udev_device_get_property_value( device->udevice, "ID_WWN_WITH_EXTENSION" ) )
+    if ( (value = udev_device_get_property_value( device->udevice, "ID_WWN_WITH_EXTENSION" )) )
     {
         device->drive_wwn = g_strdup( value + 2 );
     }
-    else if ( value = udev_device_get_property_value( device->udevice, "ID_WWN" ) )
+    else if ( (value = udev_device_get_property_value( device->udevice, "ID_WWN" )) )
     {
         device->drive_wwn = g_strdup( value + 2 );
     }
@@ -603,7 +603,7 @@ void info_drive_properties ( device_t *device )
     info_drive_connection( device );
 
     // is_ejectable
-    if ( value = udev_device_get_property_value( device->udevice, "ID_DRIVE_EJECTABLE" ) )
+    if ( (value = udev_device_get_property_value( device->udevice, "ID_DRIVE_EJECTABLE" )) )
     {
         drive_is_ejectable = atoi( value ) != 0;
     }
@@ -683,7 +683,7 @@ void info_drive_properties ( device_t *device )
     {
       drive_can_detach = TRUE;
     }
-    if ( value = udev_device_get_property_value( device->udevice, "ID_DRIVE_DETACHABLE" ) )
+    if ( (value = udev_device_get_property_value( device->udevice, "ID_DRIVE_DETACHABLE" )) )
     {
         drive_can_detach = atoi( value ) != 0;
     }
@@ -728,7 +728,7 @@ void info_device_properties( device_t *device )
     gint partition_type = 0;
 
     partition_scheme = udev_device_get_property_value( device->udevice, "UDISKS_PARTITION_SCHEME");
-    if ( value = udev_device_get_property_value( device->udevice, "UDISKS_PARTITION_TYPE") )
+    if ( (value = udev_device_get_property_value( device->udevice, "UDISKS_PARTITION_TYPE")) )
         partition_type = atoi( value );
     if (g_strcmp0 (partition_scheme, "mbr") == 0 && (partition_type == 0x05 ||
                                                    partition_type == 0x0f ||
@@ -746,13 +746,13 @@ void info_device_properties( device_t *device )
         device->id_uuid = g_strdup( udev_device_get_property_value( device->udevice,
                                                         "ID_FS_UUID" ) );
 
-        if ( value = udev_device_get_property_value( device->udevice, "ID_FS_LABEL_ENC" ) )
+        if ( (value = udev_device_get_property_value( device->udevice, "ID_FS_LABEL_ENC" )) )
         {
             decoded_string = decode_udev_encoded_string ( value );
             g_strstrip (decoded_string);
             device->id_label = decoded_string;
         }
-        else if ( value = udev_device_get_property_value( device->udevice, "ID_FS_LABEL" ) )
+        else if ( (value = udev_device_get_property_value( device->udevice, "ID_FS_LABEL" )) )
         {
             device->id_label = g_strdup( value );
         }
@@ -773,12 +773,12 @@ void info_device_properties( device_t *device )
     else if ( device->device_is_removable )
     {
         gboolean is_cd, is_floppy;
-        if ( value = udev_device_get_property_value( device->udevice, "ID_CDROM" ) )
+        if ( (value = udev_device_get_property_value( device->udevice, "ID_CDROM" )) )
             is_cd = atoi( value ) != 0;
         else
             is_cd = FALSE;
 
-        if ( value = udev_device_get_property_value( device->udevice, "ID_DRIVE_FLOPPY" ) )
+        if ( (value = udev_device_get_property_value( device->udevice, "ID_DRIVE_FLOPPY" )) )
             is_floppy = atoi( value ) != 0;
         else
             is_floppy = FALSE;
@@ -795,10 +795,10 @@ void info_device_properties( device_t *device )
                 close( fd );
             }
         }
-        else if ( value = udev_device_get_property_value( device->udevice, "ID_CDROM_MEDIA" ) )
+        else if ( (value = udev_device_get_property_value( device->udevice, "ID_CDROM_MEDIA" )) )
             media_available = ( atoi( value ) == 1 );
     }
-    else if ( value = udev_device_get_property_value( device->udevice, "ID_CDROM_MEDIA" ) )
+    else if ( (value = udev_device_get_property_value( device->udevice, "ID_CDROM_MEDIA" )) )
         media_available = ( atoi( value ) == 1 );
     else
         media_available = TRUE;
@@ -974,7 +974,7 @@ gchar* info_mount_points( device_t *device, GList* devmounts )
         mounts = g_list_sort( mounts, (GCompareFunc) g_strcmp0 );
         points = g_strdup( (gchar*)mounts->data );
         l = mounts;
-        while ( l = l->next )
+        while ( (l = l->next) )
         {
             old_points = points;
             points = g_strdup_printf( "%s, %s", old_points, (gchar*)l->data );
