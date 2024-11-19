@@ -4936,7 +4936,7 @@ static int command_info( CommandData* data )
     return ret;
 }
 
-void command_monitor_finalize()
+void command_monitor_finalize(int signum)
 {
     //if (signal == SIGINT || signal == SIGTERM)
     //printf( "\nudevil: SIGINT || SIGTERM\n");
@@ -5054,7 +5054,7 @@ finish_:
     return 1;
 }
 
-void command_interrupt()
+void command_interrupt(int signum)
 {
     if ( udev )
     {
